@@ -9,3 +9,5 @@
 /Packages
 *.csproj
 *.sln
+/.vs
+/Temp

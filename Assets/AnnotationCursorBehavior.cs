@@ -10,6 +10,7 @@ public class AnnotationCursorBehavior : MonoBehaviour
     private Transform root;
     [SerializeField]
     private Transform centerDot;
+    public Transform CenterDot { get => centerDot; set => centerDot = value; }
     [SerializeField]
     private Transform ring;
     [SerializeField]
