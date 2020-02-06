@@ -32,6 +32,7 @@
             };
 
 			float4 _Color;
+			float4 _ShadowColor;
 
             v2f vert (appdata v)
             {
@@ -47,7 +48,8 @@
 				float3 norm = normalize(i.normal);
 				float shade = dot(norm, float3(0, 1, 0)) * .5 + .5;
 				shade = 1 - pow(1 - shade, 2);
-				return _Color * shade;
+				return lerp(_ShadowColor * .5, _Color, shade);
+
             }
             ENDCG
         }

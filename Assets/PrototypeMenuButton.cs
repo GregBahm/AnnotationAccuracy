@@ -1,43 +1,22 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class PrototypeMenuButton : MonoBehaviour
+public class PrototypeMenuButton : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private bool popoutShown;
-    public bool PopoutShown
+    private MainPrototypeScript.MenuMode mode;
+    
+    public void OnPointerClick(PointerEventData eventData)
     {
-        get { return this.popoutShown; }
-        set
+        if(MainPrototypeScript.Instance.Menus == mode)
         {
-            if(this.popoutShown != value)
-            {
-                this.popoutShown = value;
-                UpdateVisuals();
-            }
+            MainPrototypeScript.Instance.Menus = MainPrototypeScript.MenuMode.None;
         }
-    }
-
-    [SerializeField]
-    private GameObject popout;
-    [SerializeField]
-    private Image buttonImage;
-    [SerializeField]
-    private Sprite shownSprite;
-    [SerializeField]
-    private Sprite unshownSprite;
-
-    public bool MenuVisible { get; private set; }
-
-    private void Start()
-    {
-        UpdateVisuals();
-    }
-
-    public void UpdateVisuals()
-    {
-        popout.SetActive(popoutShown);
-        buttonImage.sprite = popoutShown ? shownSprite : unshownSprite;
+        else
+        {
+            MainPrototypeScript.Instance.Menus = mode;
+        }
     }
 }

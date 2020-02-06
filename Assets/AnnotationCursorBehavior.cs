@@ -13,11 +13,6 @@ public class AnnotationCursorBehavior : MonoBehaviour
     public Transform CenterDot { get => centerDot; set => centerDot = value; }
     [SerializeField]
     private Transform ring;
-    [SerializeField]
-    private Transform arrowPivot;
-    [SerializeField]
-    private Transform arrow;
-    public Transform Arrow {get{return this.arrow;}}
 
     [SerializeField]
     [Range(0, 10)]
@@ -27,8 +22,10 @@ public class AnnotationCursorBehavior : MonoBehaviour
     [SerializeField]
     public float rotationSmoothing = 10;
 
-
-    public Vector3 ArrowRotationVector;
+    [SerializeField]
+    private float minZ;
+    [SerializeField]
+    private float maxZ;
 
     private Pose positionTarget = new Pose(Vector3.zero, Quaternion.identity);
 
@@ -44,15 +41,22 @@ public class AnnotationCursorBehavior : MonoBehaviour
 
     private void UpdateShaders()
     {
+        Shader.SetGlobalColor("_ShadowColor", MainPrototypeScript.Instance.AnnotationColor);
         Shader.SetGlobalVector("_CursorPos", centerDot.position);
     }
 
     private void UpdateVisualPositions()
     {
-        centerDot.LookAt(Camera.main.transform);
-        root.position = Vector3.Lerp(root.position, positionTarget.position, Time.deltaTime * positionSmoothing);
+        SetCursorZ();
         ring.rotation = Quaternion.Lerp(ring.rotation, positionTarget.rotation, Time.deltaTime * rotationSmoothing);
-        arrowPivot.localRotation = Quaternion.LookRotation(ArrowRotationVector);
+    }
+
+    private void SetCursorZ()
+    {
+        Vector3 targetInCameraSpace = Camera.main.transform.worldToLocalMatrix * positionTarget.position;
+        float zTarget = Mathf.Clamp(targetInCameraSpace.z, minZ, maxZ);
+        Vector3 localTarget = new Vector3(0, 0, zTarget);
+        root.localPosition = Vector3.Lerp(root.localPosition, localTarget, Time.deltaTime * positionSmoothing);
     }
 
     private void UpdateElementScale()
