@@ -5,11 +5,10 @@ using UnityEngine;
 
 public class InkerScript : MonoBehaviour 
 {
+    public static InkerScript Instance { get; private set; }
+
     [SerializeField]
     private GameObject strokePrefab;
-    [SerializeField]
-    private Color color;
-    public Color Color { get => color; set => color = value; }
 
     [SerializeField]
     private bool doInk = false;
@@ -27,9 +26,15 @@ public class InkerScript : MonoBehaviour
 
     private InkingStroke currentStroke;
     private Vector3 lastStrokePos;
-    
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     void Update () 
     {
+        PlaceInkTip();
         if (DoInk)
         {
             if(!lastDoInk)
@@ -57,9 +62,21 @@ public class InkerScript : MonoBehaviour
     {
         GameObject retObj = Instantiate(strokePrefab);
         LineRenderer renderer = retObj.GetComponent<LineRenderer>();
-        renderer.material.color = Color;
+        renderer.material.color = MainPrototypeScript.Instance.AnnotationColor;
         renderer.widthMultiplier = strokeWeight;
         InkingStroke ret = retObj.GetComponent<InkingStroke>();
+        MainPrototypeScript.Instance.UndoStack.AddObject(retObj);
         return ret;
+    }
+
+    private void PlaceInkTip()
+    {
+        Plane inkingPlane = new Plane(Camera.main.transform.forward, AnnotationCursorBehavior.Instance.CenterDot.position);
+        float enter;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (inkingPlane.Raycast(ray, out enter))
+        {
+            InkTip.position = ray.GetPoint(enter);
+        }
     }
 }

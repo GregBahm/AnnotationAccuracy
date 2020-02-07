@@ -3,14 +3,16 @@
     Properties
     {
 		_Color("Color", Color) = (1,1,1,1)
+		_Opacity("Opacity", Range(0, 1)) = 1
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "Queue"="Transparent" }
         LOD 100
 
         Pass
         {
+			Blend SrcAlpha OneMinusSrcAlpha
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -33,6 +35,7 @@
 
 			float4 _Color;
 			float4 _ShadowColor;
+			float _Opacity;
 
             v2f vert (appdata v)
             {
@@ -48,7 +51,9 @@
 				float3 norm = normalize(i.normal);
 				float shade = dot(norm, float3(0, 1, 0)) * .5 + .5;
 				shade = 1 - pow(1 - shade, 2);
-				return lerp(_ShadowColor * .5, _Color, shade);
+				float4 ret = lerp(_ShadowColor * .5, _Color, shade);
+				ret.a *= _Opacity;
+				return ret;
 
             }
             ENDCG

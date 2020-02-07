@@ -16,7 +16,6 @@ public class ToolSwitcherButton : MonoBehaviour, IPointerClickHandler, IPointerD
     {
         if(!dragging)
         {
-            Debug.Log("Click");
             MainPrototypeScript.Instance.Tool = tool;
         }
     }

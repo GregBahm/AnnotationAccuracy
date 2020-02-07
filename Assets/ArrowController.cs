@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ArrowController : MonoBehaviour
 {
+    public static ArrowController Instance { get; private set; }
+
     [SerializeField]
     private Transform arrowPivot;
     [SerializeField]
@@ -15,23 +17,49 @@ public class ArrowController : MonoBehaviour
     [SerializeField]
     private float minimumZ;
 
+    [SerializeField]
+    private Material ghostArrowMat;
+    [SerializeField]
+    private Material placedArrowMat;
+
     private bool wasRotating;
     private Vector3 startArrowVector;
     private Vector2 startInputLocation;
 
+    public bool IsRotating { get; set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Update()
     {
-        bool isRotating = Input.GetMouseButton(0);
-        if (isRotating)
+        if(MainPrototypeScript.Instance.Tool != MainPrototypeScript.ToolMode.Arrows)
         {
-            if(!wasRotating)
-            {
-                StartRotation();
-            }
-            UpdateRotation();
+            arrowPivot.gameObject.SetActive(false);
         }
+        else
+        {
+            arrowPivot.gameObject.SetActive(true);
+            UpdateColors();
+            if (IsRotating)
+            {
+                if (!wasRotating)
+                {
+                    StartRotation();
+                }
+                UpdateRotation();
+            }
 
-        wasRotating = isRotating;
+            wasRotating = IsRotating;
+        }
+    }
+
+    private void UpdateColors()
+    {
+        ghostArrowMat.SetColor("_Color", MainPrototypeScript.Instance.AnnotationColor);
+        placedArrowMat.SetColor("_Color", MainPrototypeScript.Instance.AnnotationColor);
     }
 
     private void StartRotation()
@@ -74,5 +102,9 @@ public class ArrowController : MonoBehaviour
         newArrow.transform.position = this.arrowPivot.position;
         newArrow.transform.rotation = this.arrowPivot.rotation;
         newArrow.transform.localScale = this.arrowPivot.lossyScale;
+        Material newMat = new Material(placedArrowMat);
+        newArrow.GetComponentInChildren<MeshRenderer>().sharedMaterial = newMat;
+
+        MainPrototypeScript.Instance.UndoStack.AddObject(newArrow);
     }
 }
