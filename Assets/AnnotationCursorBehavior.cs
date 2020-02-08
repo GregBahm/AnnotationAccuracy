@@ -35,6 +35,7 @@ public class AnnotationCursorBehavior : MonoBehaviour
     private Material ringMat;
 
     private Pose positionTarget = new Pose(Vector3.zero, Quaternion.identity);
+    public Pose PositionTarget { get { return this.positionTarget; } }
 
     private float targetFoundNess;
     public bool TargetFound { get; private set; }
@@ -44,14 +45,14 @@ public class AnnotationCursorBehavior : MonoBehaviour
         Instance = this;
     }
 
-    private void Update()
+    public void DoUpdate()
     {
         UpdateElementScale();
-        TargetFound = UpdateTargetPos();
-        if(!TargetFound)
-        {
-            DeepSearchTargetPos();
-        }
+        //TargetFound = UpdateTargetPos();
+        //if(!TargetFound)
+        //{
+           DeepSearchTargetPos();
+        //}
         UpdateVisualPositions();
         UpdateShaders();
     }
@@ -115,8 +116,8 @@ public class AnnotationCursorBehavior : MonoBehaviour
             if(distToRay < minDist)
             {
                 minDist = distToRay;
-                Quaternion rotation = Quaternion.LookRotation(rayToPoint);
-                positionTarget = new Pose(onRay, rotation);
+                Quaternion rotation = Quaternion.identity; // Quaternion.LookRotation(rayToPoint);
+                positionTarget = new Pose(point.Position, rotation);
                 TargetFound = true;
             }
         }
