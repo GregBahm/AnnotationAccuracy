@@ -19,6 +19,7 @@
 
 namespace GoogleARCore.Examples.Common
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;
@@ -176,17 +177,10 @@ namespace GoogleARCore.Examples.Common
                 _UpdateColor();
             }
 
-            if (EnablePopAnimation)
-            {
-                _AddPointsIncrementallyToCache();
-                _UpdatePointSize();
-            }
-            else
-            {
-                _AddAllPointsToCache();
-            }
+            _AddAllPointsToCache();
 
             _UpdateMesh();
+            Graphics.DrawMeshInstanced(TestMesh, 0, TestMeshMat, matris.ToArray());
         }
 
         /// <summary>
@@ -223,25 +217,7 @@ namespace GoogleARCore.Examples.Common
             m_PropertyBlock.SetColor("_Color", m_CachedColor);
             m_MeshRenderer.SetPropertyBlock(m_PropertyBlock);
         }
-
-        /// <summary>
-        /// Adds points incrementally to the cache, by selecting points at random each frame.
-        /// </summary>
-        private void _AddPointsIncrementallyToCache()
-        {
-            if (Frame.PointCloud.PointCount > 0 && Frame.PointCloud.IsUpdatedThisFrame)
-            {
-                int iterations = Mathf.Min(MaxPointsToAddPerFrame, Frame.PointCloud.PointCount);
-                for (int i = 0; i < iterations; i++)
-                {
-                    Vector3 point = Frame.PointCloud.GetPointAsStruct(
-                        Random.Range(0, Frame.PointCloud.PointCount - 1));
-
-                    _AddPointToCache(point);
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Adds all points from this frame's pointcloud to the cache.
         /// </summary>
@@ -265,48 +241,17 @@ namespace GoogleARCore.Examples.Common
             if (m_CachedPoints.Count >= m_MaxPointCount)
             {
                 m_CachedPoints.RemoveFirst();
+                matris.RemoveFirst();
             }
 
             m_CachedPoints.AddLast(new PointInfo(point, new Vector2(m_DefaultSize, m_DefaultSize),
                                                  Time.time));
+            matris.AddLast(GetMatrix(point));
         }
-
-        /// <summary>
-        /// Updates the size of the feature points, producing a pop animation where the size
-        /// increases to a maximum size and then goes back to the original size.
-        /// </summary>
-        private void _UpdatePointSize()
+        
+        private Matrix4x4 GetMatrix(Vector3 point)
         {
-            if (m_CachedPoints.Count <= 0 || !EnablePopAnimation)
-            {
-                return;
-            }
-
-            LinkedListNode<PointInfo> pointNode;
-
-            for (pointNode = m_CachedPoints.First; pointNode != null; pointNode = pointNode.Next)
-            {
-                float timeSinceAdded = Time.time - pointNode.Value.CreationTime;
-                if (timeSinceAdded >= AnimationDuration)
-                {
-                    continue;
-                }
-
-                float value = timeSinceAdded / AnimationDuration;
-                float size = 0f;
-
-                if (value < 0.5f)
-                {
-                    size = Mathf.Lerp(m_DefaultSize, m_PopSize, value * 2f);
-                }
-                else
-                {
-                    size = Mathf.Lerp(m_PopSize, m_DefaultSize, (value - 0.5f) * 2f);
-                }
-
-                pointNode.Value = new PointInfo(pointNode.Value.Position, new Vector2(size, size),
-                                                pointNode.Value.CreationTime);
-            }
+            return Matrix4x4.TRS(point, Quaternion.identity, new Vector3(ParticleScale, ParticleScale, ParticleScale));
         }
 
         /// <summary>
@@ -320,6 +265,11 @@ namespace GoogleARCore.Examples.Common
             m_Mesh.SetIndices(Enumerable.Range(0, m_CachedPoints.Count).ToArray(),
                               MeshTopology.Points, 0);
         }
+
+        public Mesh TestMesh;
+        public Material TestMeshMat;
+        public float ParticleScale;
+        private readonly LinkedList<Matrix4x4> matris = new LinkedList<Matrix4x4>();
 
         /// <summary>
         /// Contains the information of a feature point.
