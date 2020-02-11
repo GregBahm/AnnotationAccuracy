@@ -52,8 +52,7 @@ public class MainPrototypeScript : MonoBehaviour
     private void UpdateCursor()
     {
         AnnotationCursorBehavior.Instance.DoUpdate();
-        DebugAnnotationCursor.Instance.DoUpdate(AnnotationCursorBehavior.Instance.PositionTarget.position,
-            AnnotationCursorBehavior.Instance.DebugRayStart);
+        DebugAnnotationCursor.Instance.DoUpdate();
     }
 
     public void OnMenuButtonPressed()

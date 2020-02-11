@@ -5,7 +5,7 @@ public class DebugAnnotationCursor : MonoBehaviour
     public static DebugAnnotationCursor Instance { get; private set; }
 
     [SerializeField]
-    private Transform targetBall;
+    private float cylinderScale;
 
     [SerializeField]
     private Transform cylinderPivot;
@@ -15,16 +15,20 @@ public class DebugAnnotationCursor : MonoBehaviour
         Instance = this;
     }
 
-    public void DoUpdate(Vector3 positionTarget, Vector3 rayPos)
+    public void DoUpdate()
     {
-        targetBall.position = positionTarget;
+        DoUpdate(AnnotationCursorBehavior.Instance.PositionTarget.position,
+            AnnotationCursorBehavior.Instance.DebugRayStart);
+    }
+
+    private void DoUpdate(Vector3 positionTarget, Vector3 rayPos)
+    {
         Vector3 cylinderPos = (positionTarget + rayPos) / 2;
         cylinderPivot.position = cylinderPos;
 
         cylinderPivot.LookAt(rayPos);
         float dist = (positionTarget - rayPos).magnitude;
-        dist = dist / cylinderPivot.parent.lossyScale.z;
         dist /= 2;
-        cylinderPivot.localScale = new Vector3(1, 1, dist);
+        cylinderPivot.localScale = new Vector3(cylinderScale, cylinderScale, dist);
     }
 }

@@ -97,6 +97,7 @@ public class AnnotationCursorBehavior : MonoBehaviour
 
     private Ray GetCursorRay()
     {
+        return new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         float x = Camera.main.pixelWidth / 2;
         float y = Camera.main.pixelHeight / 2;
         return Camera.main.ScreenPointToRay(new Vector3(x, y, 0));
@@ -110,8 +111,8 @@ public class AnnotationCursorBehavior : MonoBehaviour
         for (int i = 0; i < Frame.PointCloud.PointCount; i++)
         {
             PointCloudPoint point = Frame.PointCloud.GetPointAsStruct(i);
-            Vector3 onRay = Vector3.Project(point.Position - cursorRay.origin, cursorRay.direction);
-            float distToRay = onRay.magnitude;
+            Vector3 onRay = NearestPointOnLine(cursorRay.origin, cursorRay.direction, point.Position);
+            float distToRay = (onRay - point.Position).magnitude;
             if (distToRay < minDist)
             {
                 minDist = distToRay;
@@ -121,6 +122,14 @@ public class AnnotationCursorBehavior : MonoBehaviour
                 TargetFound = true;
             }
         }
+    }
+
+    public static Vector3 NearestPointOnLine(Vector3 linePoint, Vector3 lineNormal, Vector3 searchPoint)
+    {
+        Vector3 unitVector = lineNormal.normalized;
+        Vector3 offset = searchPoint - linePoint;
+        float theDot = Vector3.Dot(offset, unitVector);
+        return linePoint + unitVector * theDot;
     }
 
     public Vector3 DebugRayStart { get; private set; }
