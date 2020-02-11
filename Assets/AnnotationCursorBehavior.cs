@@ -110,18 +110,20 @@ public class AnnotationCursorBehavior : MonoBehaviour
         for (int i = 0; i < Frame.PointCloud.PointCount; i++)
         {
             PointCloudPoint point = Frame.PointCloud.GetPointAsStruct(i);
-            Vector3 onRay = Vector3.Project(point.Position, cursorRay.direction) + cursorRay.origin;
-            Vector3 rayToPoint = onRay - point.Position;
-            float distToRay = rayToPoint.magnitude;
-            if(distToRay < minDist)
+            Vector3 onRay = Vector3.Project(point.Position - cursorRay.origin, cursorRay.direction);
+            float distToRay = onRay.magnitude;
+            if (distToRay < minDist)
             {
                 minDist = distToRay;
                 Quaternion rotation = Quaternion.identity; // Quaternion.LookRotation(rayToPoint);
                 positionTarget = new Pose(point.Position, rotation);
+                DebugRayStart = onRay;
                 TargetFound = true;
             }
         }
     }
+
+    public Vector3 DebugRayStart { get; private set; }
 
     private bool UpdateTargetPos()
     {

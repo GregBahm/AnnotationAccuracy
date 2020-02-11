@@ -15,16 +15,14 @@ public class DebugAnnotationCursor : MonoBehaviour
         Instance = this;
     }
 
-    public void DoUpdate()
+    public void DoUpdate(Vector3 positionTarget, Vector3 rayPos)
     {
-        Vector3 positionTarget = AnnotationCursorBehavior.Instance.PositionTarget.position;
-        Vector3 centerDotPos = AnnotationCursorBehavior.Instance.CenterDot.position;
         targetBall.position = positionTarget;
-        Vector3 cylinderPos = (positionTarget + centerDotPos) / 2;
+        Vector3 cylinderPos = (positionTarget + rayPos) / 2;
         cylinderPivot.position = cylinderPos;
 
-        cylinderPivot.LookAt(centerDotPos);
-        float dist = (positionTarget - centerDotPos).magnitude;
+        cylinderPivot.LookAt(rayPos);
+        float dist = (positionTarget - rayPos).magnitude;
         dist = dist / cylinderPivot.parent.lossyScale.z;
         dist /= 2;
         cylinderPivot.localScale = new Vector3(1, 1, dist);
