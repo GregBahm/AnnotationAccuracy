@@ -19,6 +19,9 @@ public class AnnotationCursorBehavior : MonoBehaviour
     private Transform ring;
 
     [SerializeField]
+    private TriangleMaker triangleMaker;
+
+    [SerializeField]
     [Range(0, 10)]
     private float visualsScale = 1;
     [SerializeField]
@@ -48,14 +51,21 @@ public class AnnotationCursorBehavior : MonoBehaviour
     public void DoUpdate()
     {
         UpdateElementScale();
-        //TargetFound = UpdateTargetPos();
-        //if(!TargetFound)
-        //{
-            //DeepSearchTargetPos();
-            DeepSearchScreenspaceStyle();
-        //}
+        UpdatePositionTarget();
         UpdateVisualPositions();
         UpdateShaders();
+    }
+
+    private void UpdatePositionTarget()
+    {
+        Ray ray = GetCursorRay();
+
+        float rayDist;
+        triangleMaker.TrianglePlane.Raycast(ray, out rayDist);
+        Vector3 hitLocation = ray.origin + ray.direction * rayDist;
+        Quaternion rotation = Quaternion.LookRotation(triangleMaker.TrianglePlane.normal);
+        positionTarget = new Pose(hitLocation, rotation);
+        TargetFound = true;
     }
 
     private void UpdateShaders()
@@ -79,8 +89,6 @@ public class AnnotationCursorBehavior : MonoBehaviour
     private void SetCursorZ()
     {
         Vector3 targetInCameraSpace = Camera.main.transform.worldToLocalMatrix * new Vector4(positionTarget.position.x, positionTarget.position.y, positionTarget.position.z, 1);
-        //root.localPosition = new Vector3(0, 0, targetInCameraSpace.z);
-
         float zTarget = Mathf.Clamp(targetInCameraSpace.z, minZ, maxZ);
         Vector3 localTarget = new Vector3(0, 0, zTarget);
         root.localPosition = Vector3.Lerp(root.localPosition, localTarget, Time.deltaTime * positionSmoothing);
@@ -104,55 +112,6 @@ public class AnnotationCursorBehavior : MonoBehaviour
         return Camera.main.ScreenPointToRay(new Vector3(x, y, 0));
     }
 
-    private void DeepSearchTargetPos()
-     {
-        float minDist = Mathf.Infinity;
-
-        Ray cursorRay = GetCursorRay();
-        for (int i = 0; i < Frame.PointCloud.PointCount; i++)
-        {
-            PointCloudPoint point = Frame.PointCloud.GetPointAsStruct(i);
-            Vector3 onRay = NearestPointOnLine(cursorRay.origin, cursorRay.direction, point.Position);
-            float distToRay = (onRay - point.Position).magnitude;
-            if (distToRay < minDist)
-            {
-                minDist = distToRay;
-                Quaternion rotation = Quaternion.identity; // Quaternion.LookRotation(rayToPoint);
-                positionTarget = new Pose(point.Position, rotation);
-                DebugRayStart = onRay;
-                TargetFound = true;
-            }
-        }
-    }
-
-    private void DeepSearchScreenspaceStyle()
-    {
-        float minDist = Mathf.Infinity;
-
-        Ray cursorRay = GetCursorRay();
-        for (int i = 0; i < Frame.PointCloud.PointCount; i++)
-        {
-            PointCloudPoint point = Frame.PointCloud.GetPointAsStruct(i);
-            float distToScreenpoint = GetScreenpointDistance(point.Position);
-            if (distToScreenpoint < minDist)
-            {
-                minDist = distToScreenpoint;
-                Quaternion rotation = Quaternion.identity; // Quaternion.LookRotation(rayToPoint);
-                positionTarget = new Pose(point.Position, rotation);
-                DebugRayStart = CenterDot.position;
-                TargetFound = true;
-            }
-        }
-    }
-
-    private float GetScreenpointDistance(Vector3 position)
-    {
-        Vector3 screenPointInPixels = Camera.main.WorldToScreenPoint(position);
-        float xParam = screenPointInPixels.x - Camera.main.pixelWidth / 2;
-        float yParam = screenPointInPixels.y - Camera.main.pixelHeight / 2;
-        return new Vector2(xParam, yParam).magnitude;
-    }
-
     public static Vector3 NearestPointOnLine(Vector3 linePoint, Vector3 lineNormal, Vector3 searchPoint)
     {
         Vector3 unitVector = lineNormal.normalized;
@@ -160,8 +119,6 @@ public class AnnotationCursorBehavior : MonoBehaviour
         float theDot = Vector3.Dot(offset, unitVector);
         return linePoint + unitVector * theDot;
     }
-
-    public Vector3 DebugRayStart { get; private set; }
 
     private bool UpdateTargetPos()
     {

@@ -9,13 +9,12 @@ using UnityEngine;
 public class TriangleMaker : MonoBehaviour
 {
     private Mesh triangleMesh;
-    private readonly Vector3[] meshPoints = new Vector3[3] { Vector3.zero, Vector3.up, Vector3.left };
     public Plane TrianglePlane { get; private set; }
     
     private void Start()
     {
         triangleMesh = new Mesh();
-        triangleMesh.vertices = meshPoints;
+        triangleMesh.vertices = new Vector3[3];
         triangleMesh.triangles = new int[] { 0, 1, 2 };
         GetComponent<MeshFilter>().mesh = triangleMesh;
 
@@ -36,12 +35,10 @@ public class TriangleMaker : MonoBehaviour
 
     private void UpdateMesh(PointSorter sortedPoints)
     {
-        meshPoints[0] = sortedPoints.FirstPoint.WorldPos;
-        meshPoints[1] = sortedPoints.SecondPoint.WorldPos;
-        meshPoints[2] = sortedPoints.ThirdPont.WorldPos;
-        triangleMesh.vertices = meshPoints;
+        TrianglePlane = new Plane(sortedPoints.FirstPoint.WorldPos, sortedPoints.SecondPoint.WorldPos, sortedPoints.ThirdPoint.WorldPos);
+        triangleMesh.vertices = new Vector3[] { sortedPoints.FirstPoint.WorldPos, sortedPoints.SecondPoint.WorldPos, sortedPoints.ThirdPoint.WorldPos };
+        triangleMesh.normals = new Vector3[] { TrianglePlane.normal, TrianglePlane.normal, TrianglePlane.normal };
         triangleMesh.RecalculateBounds();
-        TrianglePlane = new Plane(sortedPoints.FirstPoint.WorldPos, sortedPoints.SecondPoint.WorldPos, sortedPoints.ThirdPont.WorldPos);
     }
 
     private IEnumerable<Datum> GetData()
@@ -70,9 +67,9 @@ public class TriangleMaker : MonoBehaviour
     {
         public Datum FirstPoint { get; }
         public Datum[] SecondPointCandidates { get; }
-        public Datum SecondPoint { get; }
+        public Datum SecondPoint { get; private set; }
         public Datum[] ThirdPointCandidates { get; }
-        public Datum ThirdPont { get; }
+        public Datum ThirdPoint { get; private set; }
         public bool TriangleFound { get; }
 
         public PointSorter(IEnumerable<Datum> sourceData)
@@ -85,9 +82,22 @@ public class TriangleMaker : MonoBehaviour
                 ThirdPointCandidates = GetThirdPointCandidates(FirstPoint, SecondPoint, sourceData).ToArray();
                 if(ThirdPointCandidates.Any())
                 {
-                    ThirdPont = GetClosestPointToCenter(ThirdPointCandidates);
+                    ThirdPoint = GetClosestPointToCenter(ThirdPointCandidates);
+                    SortPointsClockwise();
                     TriangleFound = true;
                 }
+            }
+        }
+
+        private void SortPointsClockwise()
+        {
+            float angleA = Vector2.SignedAngle(FirstPoint.ToCursorNormalized, SecondPoint.ToCursorNormalized);
+            float angleB = Vector2.SignedAngle(FirstPoint.ToCursorNormalized, ThirdPoint.ToCursorNormalized);
+            if(angleA < angleB)
+            {
+                Datum thirdPoint = ThirdPoint;
+                ThirdPoint = SecondPoint;
+                SecondPoint = thirdPoint;
             }
         }
 
