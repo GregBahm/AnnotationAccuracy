@@ -51,7 +51,8 @@ public class AnnotationCursorBehavior : MonoBehaviour
         //TargetFound = UpdateTargetPos();
         //if(!TargetFound)
         //{
-           DeepSearchTargetPos();
+            //DeepSearchTargetPos();
+            DeepSearchScreenspaceStyle();
         //}
         UpdateVisualPositions();
         UpdateShaders();
@@ -122,6 +123,34 @@ public class AnnotationCursorBehavior : MonoBehaviour
                 TargetFound = true;
             }
         }
+    }
+
+    private void DeepSearchScreenspaceStyle()
+    {
+        float minDist = Mathf.Infinity;
+
+        Ray cursorRay = GetCursorRay();
+        for (int i = 0; i < Frame.PointCloud.PointCount; i++)
+        {
+            PointCloudPoint point = Frame.PointCloud.GetPointAsStruct(i);
+            float distToScreenpoint = GetScreenpointDistance(point.Position);
+            if (distToScreenpoint < minDist)
+            {
+                minDist = distToScreenpoint;
+                Quaternion rotation = Quaternion.identity; // Quaternion.LookRotation(rayToPoint);
+                positionTarget = new Pose(point.Position, rotation);
+                DebugRayStart = CenterDot.position;
+                TargetFound = true;
+            }
+        }
+    }
+
+    private float GetScreenpointDistance(Vector3 position)
+    {
+        Vector3 screenPointInPixels = Camera.main.WorldToScreenPoint(position);
+        float xParam = screenPointInPixels.x - Camera.main.pixelWidth / 2;
+        float yParam = screenPointInPixels.y - Camera.main.pixelHeight / 2;
+        return new Vector2(xParam, yParam).magnitude;
     }
 
     public static Vector3 NearestPointOnLine(Vector3 linePoint, Vector3 lineNormal, Vector3 searchPoint)

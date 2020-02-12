@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CursorMat
-  m_Shader: {fileID: 4800000, guid: 55eaaa0131a2c6546903d12d7a648bc8, type: 3}
+  m_Name: FeaturePointTriangleMat
+  m_Shader: {fileID: 4800000, guid: 8ba6a5597f76e20498be8ad29ad11b65, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -66,7 +66,6 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Opacity: 0.9999998
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -74,5 +73,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0, g: 0.25677204, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
