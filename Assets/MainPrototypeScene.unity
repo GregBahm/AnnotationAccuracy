@@ -305,7 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbd5bbbe9b39b4a4188ec76881aefece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParticleMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  ParticleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   ParticleMat: {fileID: 2100000, guid: 6cf21299b6de44a49b9c925babb1d5b9, type: 2}
   ParticleScale: 0.006
 --- !u!1001 &377115362
