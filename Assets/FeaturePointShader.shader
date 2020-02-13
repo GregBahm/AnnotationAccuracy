@@ -2,8 +2,9 @@
 {
     Properties
     {
-		//_PulseWaveSize("PulseWaveSize", Float) = 1
-		//_PulseProgression("Pulse Progression", Range(-1, 2)) = 0
+		_Color("Color", Color) = (1, 1, 1, 1)
+		_PulseWaveSize("PulseWaveSize", Float) = 1
+		_PulseProgression("Pulse Progression", Range(-1, 2)) = 0
     }
     SubShader
     {
@@ -36,6 +37,7 @@
 			float3 _PulseCenter;
 			float _PulseWaveSize;
 			float _PulseProgression;
+			float3 _Color;
 
             v2f vert (appdata v)
             {
@@ -57,13 +59,18 @@
 
             fixed4 frag (v2f i) : SV_Target
             { 
+				float2 uvDist = abs(i.uv - .5) * 2;
+				float dimondAlpha = (uvDist.x + uvDist.y);
+				dimondAlpha = 1 - saturate(dimondAlpha);
+				dimondAlpha = dimondAlpha * 10;
+				dimondAlpha = pow(dimondAlpha, 2);
 				float pulse = GetPulseProgress(i.worldPos);
 				float maxRadius = lerp(-.1, .4, pulse);
-				float distTocenter = length(i.uv - .5);
-				float alpha = 1 - (distTocenter - maxRadius) * 100;
+				//float distTocenter = length(i.uv - .5);
+				//float alpha = 1 - (distTocenter - maxRadius) * 100;
+				float alpha = dimondAlpha * maxRadius;
 				alpha = saturate(alpha);
-				float3 col = float3(1, 1, 1);//TODO: Make this cooler
-				return float4(col, alpha);
+				return float4(_Color, alpha);
             }
             ENDCG
         }

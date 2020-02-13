@@ -75,13 +75,13 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _LightingEnabled: 1
-    - _MaxPulseSize: 20
+    - _MaxPulseSize: 0.05
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _PulseProgression: 2
-    - _PulseWaveSize: 7.84
+    - _PulseProgression: 301.49857
+    - _PulseWaveSize: 0.05
     - _SmoothnessTextureChannel: 0
     - _SoftParticlesEnabled: 0
     - _SoftParticlesFarFadeDistance: 1

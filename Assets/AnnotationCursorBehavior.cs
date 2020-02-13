@@ -13,10 +13,6 @@ public class AnnotationCursorBehavior : MonoBehaviour
     [SerializeField]
     private Transform centerDot;
     public Transform CenterDot { get => centerDot; set => centerDot = value; }
-    [SerializeField]
-    private Transform ringPivot;
-    [SerializeField]
-    private Transform ring;
 
     [SerializeField]
     private TriangleMaker triangleMaker;
@@ -81,9 +77,6 @@ public class AnnotationCursorBehavior : MonoBehaviour
     private void UpdateVisualPositions()
     {
         SetCursorZ();
-        ringPivot.rotation = Quaternion.Lerp(ringPivot.rotation, positionTarget.rotation, Time.deltaTime * rotationSmoothing);
-        float ringScale = Mathf.Lerp(2, 1, targetFoundNess);
-        ring.localScale = new Vector3(ringScale, ringScale, 1);
     }
 
     private void SetCursorZ()

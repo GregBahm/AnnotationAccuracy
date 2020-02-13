@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CursorMat
-  m_Shader: {fileID: 4800000, guid: 55eaaa0131a2c6546903d12d7a648bc8, type: 3}
+  m_Name: CursorDistanceMat
+  m_Shader: {fileID: 4800000, guid: b585156cd0eb2db44a66766981692b4b, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -66,8 +66,9 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Opacity: 0.9999999
     - _Parallax: 0.02
+    - _RingFrequency: 0.1
+    - _RingThickness: 0.9
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
