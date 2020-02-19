@@ -5,22 +5,32 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter))]
 public class TriangleMaker : MonoBehaviour
 {
+    [SerializeField]
+    private MeshFilter meshFilter;
+
+    public static TriangleMaker Instance { get; private set; }
+
     private Mesh triangleMesh;
     public Plane TrianglePlane { get; private set; }
-    
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
         triangleMesh = new Mesh();
         triangleMesh.vertices = new Vector3[3];
         triangleMesh.triangles = new int[] { 0, 1, 2 };
-        GetComponent<MeshFilter>().mesh = triangleMesh;
+        triangleMesh.colors = new Color[] { Color.red, Color.green, Color.blue };
+        meshFilter.mesh = triangleMesh;
 
     }
 
-    private void Update()
+    public void DoUpdate()
     {
         Datum[] data = GetData().ToArray();
         if (data.Length >= 3)

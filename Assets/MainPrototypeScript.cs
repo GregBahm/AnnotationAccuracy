@@ -21,8 +21,7 @@ public class MainPrototypeScript : MonoBehaviour
     public ToolMode Tool { get => tool; set => tool = value; }
     
     public AnnotationsUndoStack UndoStack { get; } = new AnnotationsUndoStack();
-
-    private bool mousePressingButton;
+    
     public MenuMode Menus { get; set; } = MenuMode.None;
     
     public enum ToolMode
@@ -31,7 +30,7 @@ public class MainPrototypeScript : MonoBehaviour
         Arrows
     }
 
-     public enum MenuMode
+    public enum MenuMode
     {
         Tools,
         Call,
@@ -47,17 +46,17 @@ public class MainPrototypeScript : MonoBehaviour
     {
         UpdateMenus();
         UpdateCursor();
+        //MeshBuilder.Instance.BuildMeshFromFeaturePoints();
     }
 
     private void UpdateCursor()
     {
         AnnotationCursorBehavior.Instance.DoUpdate();
-        CursorDistanceDisplayer.Instance.DoUpdate();
+        TriangleMaker.Instance.DoUpdate();
     }
 
     public void OnMenuButtonPressed()
     {
-        mousePressingButton = true;
     }
 
     private void UpdateMenus()

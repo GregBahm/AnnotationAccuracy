@@ -15,9 +15,6 @@ public class AnnotationCursorBehavior : MonoBehaviour
     public Transform CenterDot { get => centerDot; set => centerDot = value; }
 
     [SerializeField]
-    private TriangleMaker triangleMaker;
-
-    [SerializeField]
     [Range(0, 10)]
     private float visualsScale = 1;
     [SerializeField]
@@ -57,9 +54,9 @@ public class AnnotationCursorBehavior : MonoBehaviour
         Ray ray = GetCursorRay();
 
         float rayDist;
-        triangleMaker.TrianglePlane.Raycast(ray, out rayDist);
+        TriangleMaker.Instance.TrianglePlane.Raycast(ray, out rayDist);
         Vector3 hitLocation = ray.origin + ray.direction * rayDist;
-        Quaternion rotation = Quaternion.LookRotation(triangleMaker.TrianglePlane.normal);
+        Quaternion rotation = Quaternion.LookRotation(TriangleMaker.Instance.TrianglePlane.normal);
         positionTarget = new Pose(hitLocation, rotation);
         TargetFound = true;
     }
