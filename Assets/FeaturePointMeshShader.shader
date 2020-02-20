@@ -2,14 +2,17 @@
 {
     Properties
     {
+		_FogStart("Fog Start", Float) = 1
+		_FogEnd("Fog End", Float) = 1
     }
     SubShader
     {
 		Tags { "Queue" = "Transparent" }
         LOD 100
 
-		Blend SrcAlpha OneMinusSrcAlpha
-		ZWrite Off
+		Cull Off
+		//Blend SrcAlpha OneMinusSrcAlpha
+		//ZWrite Off
         
 		Pass
         {
@@ -36,6 +39,8 @@
 
 			float3 _CursorPos;
 			float4 _Color;
+			float _FogStart;
+			float _FogEnd;
 
             v2f vert (appdata v)
             {
@@ -49,17 +54,24 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
+				float depth = i.vertex.z;
+				float fog = (depth - _FogStart) / (_FogEnd - _FogStart);
+
+				//return float4(i.color, 1);
 				//return float4(i.color, 1);
 				float3 edgeDist = 1 - i.color;
-				float alpha = min(edgeDist.x, max(edgeDist.y, edgeDist.z));
-				alpha = pow(alpha, 10);
+				float edgeAlpha = max(edgeDist.x, max(edgeDist.y, edgeDist.z));
+				edgeAlpha = pow(edgeAlpha, 10) * .1;
 
 				float dist = 1 - length(i.worldPos - _CursorPos) * 5;
 				float distAlpha = dist;
 				//return float4(1, 1, 1, distAlpha);
 
-				alpha = alpha + saturate(distAlpha);
-				return float4(1, 1, 1, alpha);
+
+				return fog + edgeAlpha;
+
+				//alpha = alpha + saturate(distAlpha);
+				//return float4(1, 1, 1, alpha);
             }
             ENDCG
         }

@@ -5,10 +5,22 @@ using UnityEngine;
 
 public class AnchorManager : MonoBehaviour
 {
-    private void Update()
+    private Anchor theAnchor;
+
+    public static AnchorManager Instance { get; private set; }
+
+    private void Awake()
     {
-        //Trackable trackable = new Trackable();
-        //trackable.Creat
-        //GoogleARCore.Anchor anchor = new GoogleARCore.Anchor();
+        Instance = this;
+    }
+
+    public void ParentToAnchor(Transform obj)
+    {
+        if(theAnchor == null)
+        {
+            Pose anchorPose = new Pose(obj.position, obj.rotation);
+            theAnchor = Session.CreateAnchor(anchorPose);
+        }
+        obj.SetParent(theAnchor.transform, true);
     }
 }

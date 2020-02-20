@@ -46,7 +46,7 @@ public class MainPrototypeScript : MonoBehaviour
     {
         UpdateMenus();
         UpdateCursor();
-        //MeshBuilder.Instance.BuildMeshFromFeaturePoints();
+        MeshBuilder.Instance.BuildMeshFromFeaturePoints();
     }
 
     private void UpdateCursor()

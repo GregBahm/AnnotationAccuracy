@@ -2,6 +2,8 @@
 {
     Properties
     {
+		_RingFrequency("Ring Frequence", Float) = 1
+		_RingThickness("Ring Thickness", Range(0, 1)) = .5
 		_Color("Color", Color) = (1,1,1,1)
     }
     SubShader
@@ -38,6 +40,9 @@
 			float3 _CursorPos;
 			float4 _Color;
 
+			float _RingFrequency;
+			float _RingThickness;
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -52,13 +57,18 @@
             {
 				float3 edgeDist = 1 - i.color;
 				float alpha = max(edgeDist.x, max(edgeDist.y, edgeDist.z));
-				alpha = pow(alpha, 100) * .1;
+				alpha = pow(alpha, 100) * .5;
 
 				float dist = 1 - length(i.worldPos - _CursorPos) * 10;
 				float distAlpha = dist * .5;
 
-				alpha = alpha + saturate(distAlpha);
-				return float4(1, 1, 1, alpha);
+				float waves = (dist % _RingFrequency) / _RingFrequency;
+				waves = 1 - abs(waves - .5) * 2;
+				waves = (waves - _RingThickness) * 20;
+				waves = saturate(waves);
+
+				alpha = alpha + waves * distAlpha;
+				return float4(_Color.rgb, alpha);
             }
             ENDCG
         }

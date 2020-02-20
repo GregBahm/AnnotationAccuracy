@@ -31,24 +31,40 @@ public class MeshBuilder : MonoBehaviour
 
     public void BuildMeshFromFeaturePoints()
     {
-        List<Vector3> points = GetPointCloudPositions().ToList();
-
-        if (points.Count >= 3)
+        List<Vector3> psuedoHightmapPoints = GetPointCloudPositions().ToList();
+        //psuedoHightmapPoints.AddRange(GetCornerPoints(psuedoHightmapPoints));
+        if (psuedoHightmapPoints.Count >= 3)
         {
-            TriangleNet.Mesh mesh = GetTriangulatedMesh(points);
+            TriangleNet.Mesh mesh = GetTriangulatedMesh(psuedoHightmapPoints);
             UpdateOutputMesh(mesh);
         }
     }
+
+    //private IEnumerable<Vector3> GetCornerPoints(List<Vector3> psuedoHightmapPoints)
+    //{
+    //    float minX;
+    //    float minZ;
+    //    float maxX;
+    //    float maxZ;
+    //}
 
     private IEnumerable<Vector3> GetPointCloudPositions()
     {
         for (int i = 0; i < Frame.PointCloud.PointCount; i++)
         {
-            yield return Frame.PointCloud.GetPointAsStruct(i).Position;
+            Vector3 worldPosition = Frame.PointCloud.GetPointAsStruct(i).Position;
+            yield return GetPointAsPsuedoHeightmap(worldPosition);
         }
     }
 
-    private TriangleNet.Mesh GetTriangulatedMesh(List<Vector3> points)
+    // The ConformingDelaunay conforms in the y dimension, but we want it to conform in the camera's z dimension
+    private Vector3 GetPointAsPsuedoHeightmap(Vector3 worldPosition)
+    {
+        Vector3 cameraSpace = Camera.main.transform.worldToLocalMatrix * new Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1);
+        return SwizzleVertex(cameraSpace);
+    }
+
+    public TriangleNet.Mesh GetTriangulatedMesh(List<Vector3> points)
     {
         Polygon polygon = new Polygon();
 
@@ -57,11 +73,16 @@ public class MeshBuilder : MonoBehaviour
             polygon.Add(new Vertex(point));
         }
 
-        TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = false };
+        TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = true };
         return (TriangleNet.Mesh)polygon.Triangulate(options);
     }
 
-    private void UpdateOutputMesh(TriangleNet.Mesh mesh)
+    private Vector3 SwizzleVertex(Vector3 baseVert)
+    {
+        return new Vector3(baseVert.x, baseVert.z, baseVert.y);
+    }
+
+    public void UpdateOutputMesh(TriangleNet.Mesh mesh)
     {
         int indiciesCount = mesh.Triangles.Count * 3;
 
@@ -75,19 +96,19 @@ public class MeshBuilder : MonoBehaviour
         {
             triangleEnumerator.MoveNext();
             Triangle triangle = triangleEnumerator.Current;
-            Vertex v0 = triangle.GetVertex(2);
-            Vertex v1 = triangle.GetVertex(1);
-            Vertex v2 = triangle.GetVertex(0);
+            Vector3 v0 = SwizzleVertex(triangle.GetVertex(2).original);
+            Vector3 v1 = SwizzleVertex(triangle.GetVertex(1).original);
+            Vector3 v2 = SwizzleVertex(triangle.GetVertex(0).original);
 
-            vertices[i] = v0.original;
-            vertices[i + 1] = v1.original;
-            vertices[i + 2] = v2.original;
+            vertices[i] = v0;
+            vertices[i + 1] = v1;
+            vertices[i + 2] = v2;
 
             triangles[i] = i;
             triangles[i + 1] = i + 1;
             triangles[i + 2] = i + 2;
 
-            Vector3 normal = Vector3.Cross(v1.original - v0.original, v2.original - v0.original);
+            Vector3 normal = Vector3.Cross(v1 - v0, v2 - v0);
             normals[i] = normal;
             normals[i + 1] = normal;
             normals[i + 2] = normal;

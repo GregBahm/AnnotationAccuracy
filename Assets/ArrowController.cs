@@ -106,5 +106,7 @@ public class ArrowController : MonoBehaviour
         newArrow.GetComponentInChildren<MeshRenderer>().sharedMaterial = newMat;
 
         MainPrototypeScript.Instance.UndoStack.AddObject(newArrow);
+
+        AnchorManager.Instance.ParentToAnchor(newArrow.transform);
     }
 }
