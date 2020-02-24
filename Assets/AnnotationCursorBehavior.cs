@@ -44,6 +44,8 @@ public class AnnotationCursorBehavior : MonoBehaviour
     public void DoUpdate()
     {
         UpdateElementScale();
+
+        //UpdatePositionTargetLegacyStyle();
         UpdatePositionTarget();
         UpdateVisualPositions();
         UpdateShaders();
@@ -110,7 +112,7 @@ public class AnnotationCursorBehavior : MonoBehaviour
         return linePoint + unitVector * theDot;
     }
 
-    private bool UpdateTargetPos()
+    private bool UpdatePositionTargetLegacyStyle()
     {
         float x = Camera.main.pixelWidth / 2;
         float y = Camera.main.pixelHeight / 2;

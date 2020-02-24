@@ -107,6 +107,6 @@ public class ArrowController : MonoBehaviour
 
         MainPrototypeScript.Instance.UndoStack.AddObject(newArrow);
 
-        AnchorManager.Instance.ParentToAnchor(newArrow.transform);
+        TrackingManager.Instance.ParentToAnchor(newArrow.transform);
     }
 }

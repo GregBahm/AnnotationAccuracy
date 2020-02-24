@@ -11,8 +11,8 @@
         LOD 100
 
 		Cull Off
-		//Blend SrcAlpha OneMinusSrcAlpha
-		//ZWrite Off
+		Blend SrcAlpha OneMinusSrcAlpha
+		ZWrite Off
         
 		Pass
         {
@@ -61,14 +61,14 @@
 				//return float4(i.color, 1);
 				float3 edgeDist = 1 - i.color;
 				float edgeAlpha = max(edgeDist.x, max(edgeDist.y, edgeDist.z));
-				edgeAlpha = pow(edgeAlpha, 10) * .1;
+				edgeAlpha = pow(edgeAlpha, 100) * .4;
 
-				float dist = 1 - length(i.worldPos - _CursorPos) * 5;
+				float dist = 1 - length(i.worldPos - _CursorPos) * 20;
 				float distAlpha = dist;
 				//return float4(1, 1, 1, distAlpha);
 
 
-				return fog + edgeAlpha;
+				return float4(1, 1, 1, distAlpha + edgeAlpha);
 
 				//alpha = alpha + saturate(distAlpha);
 				//return float4(1, 1, 1, alpha);

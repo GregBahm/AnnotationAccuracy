@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnchorManager : MonoBehaviour
+public class TrackingManager : MonoBehaviour
 {
     private Anchor theAnchor;
 
-    public static AnchorManager Instance { get; private set; }
+    public static TrackingManager Instance { get; private set; }
 
     private void Awake()
     {

@@ -32,7 +32,8 @@ public class TriangleMaker : MonoBehaviour
 
     public void DoUpdate()
     {
-        Datum[] data = GetData().ToArray();
+        Vector2 cursorPosition = GetCursorPixelPosition();
+        Datum[] data = GetData(cursorPosition).ToArray();
         if (data.Length >= 3)
         {
             PointSorter sortedPoints = new PointSorter(data);
@@ -43,6 +44,13 @@ public class TriangleMaker : MonoBehaviour
         }
     }
 
+    private Vector2 GetCursorPixelPosition()
+    {
+        float xPos = Camera.main.pixelWidth / 2;
+        float yPos = Camera.main.pixelHeight / 2;
+        return new Vector2(xPos, yPos);
+    }
+
     private void UpdateMesh(PointSorter sortedPoints)
     {
         TrianglePlane = new Plane(sortedPoints.FirstPoint.WorldPos, sortedPoints.SecondPoint.WorldPos, sortedPoints.ThirdPoint.WorldPos);
@@ -51,19 +59,19 @@ public class TriangleMaker : MonoBehaviour
         triangleMesh.RecalculateBounds();
     }
 
-    private IEnumerable<Datum> GetData()
+    private IEnumerable<Datum> GetData(Vector2 cursorPixelPosition)
     {
         for (int i = 0; i < Frame.PointCloud.PointCount; i++)
         {
-            yield return GetDatum(Frame.PointCloud.GetPointAsStruct(i).Position, i);
+            yield return GetDatum(Frame.PointCloud.GetPointAsStruct(i).Position, i, cursorPixelPosition);
         }
     }
 
-    private Datum GetDatum(Vector3 pointPosition, int index)
+    private Datum GetDatum(Vector3 pointPosition, int index, Vector2 cursorPixelPosition)
     {
         Vector3 screenPointInPixels = Camera.main.WorldToScreenPoint(pointPosition);
-        float xParam = screenPointInPixels.x - Camera.main.pixelWidth / 2;
-        float yParam = screenPointInPixels.y - Camera.main.pixelHeight / 2;
+        float xParam = screenPointInPixels.x - cursorPixelPosition.x;
+        float yParam = screenPointInPixels.y - cursorPixelPosition.y;
         Vector2 fromScreenCenter = new Vector2(xParam, yParam);
 
         float cursorDist = fromScreenCenter.magnitude;
