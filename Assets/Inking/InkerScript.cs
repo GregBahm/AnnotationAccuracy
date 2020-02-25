@@ -62,7 +62,7 @@ public class InkerScript : MonoBehaviour
     {
         GameObject retObj = Instantiate(strokePrefab);
         LineRenderer renderer = retObj.GetComponent<LineRenderer>();
-        renderer.material.color = MainPrototypeScript.Instance.AnnotationColor;
+        renderer.material.color = AnnotationColorManager.Instance.AnnotationColor;
         renderer.widthMultiplier = strokeWeight;
         InkingStroke ret = retObj.GetComponent<InkingStroke>();
         MainPrototypeScript.Instance.UndoStack.AddObject(retObj);

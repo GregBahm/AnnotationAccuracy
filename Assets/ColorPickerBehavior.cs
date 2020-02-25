@@ -9,8 +9,6 @@ public class ColorPickerBehavior : MonoBehaviour, IPointerClickHandler
 {
     private int colorPickIndex;
 
-    public Color[] Colors;
-
     [SerializeField]
     private TMP_Text colorPickerDot;
     [SerializeField]
@@ -18,18 +16,18 @@ public class ColorPickerBehavior : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
-        MainPrototypeScript.Instance.AnnotationColor = Colors[colorPickIndex];
+        AnnotationColorManager.Instance.AnnotationColor = AnnotationColorManager.Instance.Colors[colorPickIndex];
     }
 
     private void Update()
     {
-        colorPickerDot.color = MainPrototypeScript.Instance.AnnotationColor;
-        circleFill.color = MainPrototypeScript.Instance.AnnotationColor;
+        colorPickerDot.color = AnnotationColorManager.Instance.AnnotationColor;
+        circleFill.color = AnnotationColorManager.Instance.AnnotationColor;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        colorPickIndex = (colorPickIndex + 1) % Colors.Length;
-        MainPrototypeScript.Instance.AnnotationColor = Colors[colorPickIndex];
+        colorPickIndex = (colorPickIndex + 1) % AnnotationColorManager.Instance.Colors.Length;
+        AnnotationColorManager.Instance.AnnotationColor = AnnotationColorManager.Instance.Colors[colorPickIndex];
     }
 }

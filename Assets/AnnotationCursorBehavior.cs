@@ -13,6 +13,8 @@ public class AnnotationCursorBehavior : MonoBehaviour
     [SerializeField]
     private Transform centerDot;
     public Transform CenterDot { get => centerDot; set => centerDot = value; }
+    [SerializeField]
+    private Transform ringPivot;
 
     [SerializeField]
     [Range(0, 10)]
@@ -26,16 +28,10 @@ public class AnnotationCursorBehavior : MonoBehaviour
     private float minZ;
     [SerializeField]
     private float maxZ;
-
-    [SerializeField]
-    private Material ringMat;
-
+    
     private Pose positionTarget = new Pose(Vector3.zero, Quaternion.identity);
     public Pose PositionTarget { get { return this.positionTarget; } }
-
-    private float targetFoundNess;
-    public bool TargetFound { get; private set; }
-
+    
     private void Awake()
     {
         Instance = this;
@@ -60,22 +56,18 @@ public class AnnotationCursorBehavior : MonoBehaviour
         Vector3 hitLocation = ray.origin + ray.direction * rayDist;
         Quaternion rotation = Quaternion.LookRotation(TriangleMaker.Instance.TrianglePlane.normal);
         positionTarget = new Pose(hitLocation, rotation);
-        TargetFound = true;
     }
 
     private void UpdateShaders()
     {
-        Shader.SetGlobalColor("_ShadowColor", MainPrototypeScript.Instance.AnnotationColor);
+        Shader.SetGlobalColor("_ShadowColor", AnnotationColorManager.Instance.AnnotationColor);
         Shader.SetGlobalVector("_CursorPos", centerDot.position);
-
-        float cursorAlphaTarget = TargetFound ? 1 : 0;
-        targetFoundNess = Mathf.Lerp(targetFoundNess, cursorAlphaTarget, Time.deltaTime * 4);
-        ringMat.SetFloat("_Opacity", targetFoundNess);
     }
 
     private void UpdateVisualPositions()
     {
         SetCursorZ();
+        ringPivot.rotation = PositionTarget.rotation;
     }
 
     private void SetCursorZ()

@@ -46,14 +46,22 @@
                 return o;
             }
 
+			float3 GetLightningColor(float3 normal)
+			{
+				float shade = dot(normal, float3(0, 1, 0)) * .5 + .5;
+
+				float3 lightingColor = lerp(float3(0, 1, 1), float3(1, 0, 1), shade);
+				lightingColor = pow(lightingColor, 4);
+				lightingColor = lerp(lightingColor, shade * 3, .8);
+				return lightingColor;
+			}
+
             fixed4 frag (v2f i) : SV_Target
             {
 				float3 norm = normalize(i.normal);
-				float shade = dot(norm, float3(0, 1, 0)) * .5 + .5;
-				shade = 1 - pow(1 - shade, 2);
-				float4 ret = lerp(_ShadowColor * .5, _Color, shade);
-				ret.a *= _Opacity;
-				return ret;
+				float3 lightingColor = GetLightningColor(norm);
+				float3 ret = lightingColor * _Color;
+				return float4(ret, _Opacity);
 
             }
             ENDCG

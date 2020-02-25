@@ -47,11 +47,20 @@
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-				o.normal = v.normal * .5 + .5;
+				o.normal = mul(unity_ObjectToWorld, v.normal);
 				o.color = v.color;
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
                 return o;
             }
+
+			float3 GetLightningColor(float3 normal)
+			{
+				float shade = dot(normal, float3(0, 1, 0)) * .5 + .5;
+
+				float3 lightingColor = lerp(float3(0, 1, 1), float3(1, 0, 1), shade);
+				lightingColor = pow(lightingColor, 2);
+				return lightingColor;
+			}
 
             fixed4 frag (v2f i) : SV_Target
             {
@@ -67,8 +76,12 @@
 				waves = (waves - _RingThickness) * 20;
 				waves = saturate(waves);
 
-				alpha = alpha + waves * distAlpha;
-				return float4(_Color.rgb, alpha);
+				float3 norm = normalize(i.normal);
+				float3 lightingColor = GetLightningColor(norm);
+
+				lightingColor = lerp(lightingColor, 1, alpha * 10);
+				alpha = alpha + distAlpha;
+				return float4(lightingColor, alpha);
             }
             ENDCG
         }

@@ -7,8 +7,6 @@ public class MainPrototypeScript : MonoBehaviour
 {
     public static MainPrototypeScript Instance { get; private set; }
 
-    public Color AnnotationColor { get; set; }
-
     [SerializeField]
     private GameObject toolsMenu;
     [SerializeField]
@@ -47,6 +45,7 @@ public class MainPrototypeScript : MonoBehaviour
         UpdateMenus();
         UpdateCursor();
         MeshBuilder.Instance.BuildMeshFromFeaturePoints();
+        FancyTargettingCursor.Instance.DoUpdate();
     }
 
     private void UpdateCursor()

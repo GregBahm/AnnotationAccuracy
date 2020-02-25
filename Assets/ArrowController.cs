@@ -58,8 +58,8 @@ public class ArrowController : MonoBehaviour
 
     private void UpdateColors()
     {
-        ghostArrowMat.SetColor("_Color", MainPrototypeScript.Instance.AnnotationColor);
-        placedArrowMat.SetColor("_Color", MainPrototypeScript.Instance.AnnotationColor);
+        ghostArrowMat.SetColor("_Color", AnnotationColorManager.Instance.AnnotationColor);
+        placedArrowMat.SetColor("_Color", AnnotationColorManager.Instance.AnnotationColor);
     }
 
     private void StartRotation()

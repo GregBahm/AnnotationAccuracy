@@ -15,6 +15,12 @@ public class TriangleMaker : MonoBehaviour
     private Mesh triangleMesh;
     public Plane TrianglePlane { get; private set; }
 
+    public bool FoundTriangle { get; private set; }
+
+    public Vector3 PointA { get; private set; }
+    public Vector3 PointB { get; private set; }
+    public Vector3 PointC { get; private set; }
+
     private void Awake()
     {
         Instance = this;
@@ -32,6 +38,8 @@ public class TriangleMaker : MonoBehaviour
 
     public void DoUpdate()
     {
+
+        FoundTriangle = false;
         Vector2 cursorPosition = GetCursorPixelPosition();
         Datum[] data = GetData(cursorPosition).ToArray();
         if (data.Length >= 3)
@@ -39,6 +47,10 @@ public class TriangleMaker : MonoBehaviour
             PointSorter sortedPoints = new PointSorter(data);
             if(sortedPoints.TriangleFound)
             {
+                FoundTriangle = true;
+                PointA = sortedPoints.FirstPoint.WorldPos;
+                PointB = sortedPoints.SecondPoint.WorldPos;
+                PointC = sortedPoints.ThirdPoint.WorldPos;
                 UpdateMesh(sortedPoints);
             }
         }
