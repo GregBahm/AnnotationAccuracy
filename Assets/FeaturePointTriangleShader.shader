@@ -59,6 +59,7 @@
 
 				float3 lightingColor = lerp(float3(0, 1, 1), float3(1, 0, 1), shade);
 				lightingColor = pow(lightingColor, 2);
+				lightingColor = lerp(lightingColor, 1, .9);
 				return lightingColor;
 			}
 

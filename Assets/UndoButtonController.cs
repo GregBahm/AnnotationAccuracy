@@ -7,9 +7,9 @@ public class UndoButtonController : MonoBehaviour, IPointerClickHandler
 {
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(MainPrototypeScript.Instance.UndoStack.CanUndo)
+        if(MainUiScript.Instance.UndoStack.CanUndo)
         {
-            MainPrototypeScript.Instance.UndoStack.Undo();
+            MainUiScript.Instance.UndoStack.Undo();
         }
     }
 }

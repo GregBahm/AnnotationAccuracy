@@ -6,17 +6,17 @@ using UnityEngine.UI;
 public class PrototypeMenuButton : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
-    private MainPrototypeScript.MenuMode mode;
+    private MainUiScript.MenuMode mode;
     
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(MainPrototypeScript.Instance.Menus == mode)
+        if(MainUiScript.Instance.Menus == mode)
         {
-            MainPrototypeScript.Instance.Menus = MainPrototypeScript.MenuMode.None;
+            MainUiScript.Instance.Menus = MainUiScript.MenuMode.None;
         }
         else
         {
-            MainPrototypeScript.Instance.Menus = mode;
+            MainUiScript.Instance.Menus = mode;
         }
     }
 }

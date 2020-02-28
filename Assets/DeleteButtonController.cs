@@ -7,6 +7,6 @@ public class DeleteButtonController : MonoBehaviour, IPointerClickHandler
 {
     public void OnPointerClick(PointerEventData eventData)
     {
-        MainPrototypeScript.Instance.UndoStack.DeleteAll();
+        MainUiScript.Instance.UndoStack.DeleteAll();
     }
 }

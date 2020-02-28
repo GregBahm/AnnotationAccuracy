@@ -14,7 +14,7 @@ public class TrackingManager : MonoBehaviour
     public bool HasTracking { get; private set; }
 
     [SerializeField]
-    private RawImage trackingLossIndicator;
+    private Image trackingLossIndicator;
 
     [SerializeField]
     private Material ghostArrowMat;
@@ -59,7 +59,7 @@ public class TrackingManager : MonoBehaviour
         trackingLossIndicator.color = new Color(1, 1, 1, trackinglossAlpha);
 
         float cursorElementAlpha = Mathf.Clamp01(trackingness * 2);
-        ghostArrowMat.SetFloat("_Opacity", cursorElementAlpha * .9f);
+        ghostArrowMat.SetFloat("_Opacity", cursorElementAlpha * .6f);
         arrowRingMat.SetFloat("_Opacity", cursorElementAlpha);
     }
 

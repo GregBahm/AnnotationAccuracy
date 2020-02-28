@@ -3,9 +3,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainPrototypeScript : MonoBehaviour
+public class MainUiScript : MonoBehaviour
 {
-    public static MainPrototypeScript Instance { get; private set; }
+    public static MainUiScript Instance { get; private set; }
 
     [SerializeField]
     private GameObject toolsMenu;
@@ -13,6 +13,11 @@ public class MainPrototypeScript : MonoBehaviour
     private GameObject callMenu;
     [SerializeField]
     private InkerScript inking;
+
+    [SerializeField]
+    private GameObject originalUi;
+    [SerializeField]
+    private GameObject revisedUi;
 
     [SerializeField]
     private ToolMode tool;
@@ -40,18 +45,11 @@ public class MainPrototypeScript : MonoBehaviour
         Instance = this;
     }
 
-    private void Update()
+    public void DoUpdate(PrototypeConfiguration.UiLayoutStyle layoutStyle)
     {
+        originalUi.SetActive(layoutStyle == PrototypeConfiguration.UiLayoutStyle.Original);
+        revisedUi.SetActive(layoutStyle == PrototypeConfiguration.UiLayoutStyle.Revised);
         UpdateMenus();
-        UpdateCursor();
-        MeshBuilder.Instance.BuildMeshFromFeaturePoints();
-        FancyTargettingCursor.Instance.DoUpdate();
-    }
-
-    private void UpdateCursor()
-    {
-        AnnotationCursorBehavior.Instance.DoUpdate();
-        TriangleMaker.Instance.DoUpdate();
     }
 
     public void OnMenuButtonPressed()
@@ -60,6 +58,7 @@ public class MainPrototypeScript : MonoBehaviour
 
     private void UpdateMenus()
     {
+
         toolsMenu.SetActive(Menus == MenuMode.Tools);
         callMenu.SetActive(Menus == MenuMode.Call); 
     }

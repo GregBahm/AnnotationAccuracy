@@ -36,9 +36,8 @@ public class TriangleMaker : MonoBehaviour
 
     }
 
-    public void DoUpdate()
+    public void DoUpdate(bool showTriangle)
     {
-
         FoundTriangle = false;
         Vector2 cursorPosition = GetCursorPixelPosition();
         Datum[] data = GetData(cursorPosition).ToArray();
@@ -54,6 +53,8 @@ public class TriangleMaker : MonoBehaviour
                 UpdateMesh(sortedPoints);
             }
         }
+
+        meshFilter.gameObject.SetActive(showTriangle);
     }
 
     private Vector2 GetCursorPixelPosition()
@@ -116,6 +117,10 @@ public class TriangleMaker : MonoBehaviour
                     SortPointsClockwise();
                     TriangleFound = true;
                 }
+            }
+            else
+            {
+                // TODO: Implement your logic to extrapolate the second and third points here
             }
         }
 

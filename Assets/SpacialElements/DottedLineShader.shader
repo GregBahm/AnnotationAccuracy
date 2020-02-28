@@ -1,19 +1,18 @@
-﻿Shader "Unlit/FancyTargettingLineSegmentShader"
+﻿Shader "Unlit/DottedLineShader"
 {
     Properties
     {
-		_SegmentLength("Seg Length", Range(0, 1)) = .5
-		_RingSize("Ring Size", Range(0, 1)) = .5
+		_Frequency("Frequency", Float) = 1
     }
     SubShader
     {
         Tags { "RenderType"="Opaque" }
         LOD 100
 
-		Blend One One
-		ZWrite Off
         Pass
         {
+			ZWrite Off
+			Blend One One
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -32,9 +31,6 @@
                 float4 vertex : SV_POSITION;
             };
 
-			float _SegmentLength;
-			float _RingSize;
-
             v2f vert (appdata v)
             {
                 v2f o;
@@ -43,17 +39,17 @@
                 return o;
             }
 
+			float _Frequency;
+			float _LineLength;
+			float _Opacity;
+
             fixed4 frag (v2f i) : SV_Target
             {
-				float param = _RingSize / _SegmentLength;
-				if (i.uv.x < param)
-				{
-					return 0;
-				}
-				float ret = (1 - i.uv.x) * _SegmentLength;
-				ret = ret / (_SegmentLength - _RingSize);
-				ret = 1 - pow(ret, 1);
-				return ret * .3;
+				float val = i.uv.x * _LineLength * 100;
+				float dotted = val % _Frequency;
+				dotted = abs(dotted - .5) * 2;
+				dotted = saturate(dotted - .5) * 20;
+				return dotted;
             }
             ENDCG
         }

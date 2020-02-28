@@ -10,13 +10,13 @@ public class ToolSwitcherButton : MonoBehaviour, IPointerClickHandler, IPointerD
     private bool dragging;
 
     [SerializeField]
-    private MainPrototypeScript.ToolMode tool;
+    private MainUiScript.ToolMode tool;
 
     public void OnPointerClick(PointerEventData eventData)
     {
         if(!dragging)
         {
-            MainPrototypeScript.Instance.Tool = tool;
+            MainUiScript.Instance.Tool = tool;
         }
     }
 

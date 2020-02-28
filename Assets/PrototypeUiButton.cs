@@ -5,6 +5,6 @@ public class PrototypeUiButton : MonoBehaviour, IPointerDownHandler
 {
     public void OnPointerDown(PointerEventData eventData)
     {
-        MainPrototypeScript.Instance.OnMenuButtonPressed();
+        MainUiScript.Instance.OnMenuButtonPressed();
     }
 }

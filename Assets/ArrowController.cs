@@ -35,7 +35,7 @@ public class ArrowController : MonoBehaviour
 
     private void Update()
     {
-        if(MainPrototypeScript.Instance.Tool != MainPrototypeScript.ToolMode.Arrows)
+        if(MainUiScript.Instance.Tool != MainUiScript.ToolMode.Arrows)
         {
             arrowPivot.gameObject.SetActive(false);
         }
@@ -105,7 +105,7 @@ public class ArrowController : MonoBehaviour
         Material newMat = new Material(placedArrowMat);
         newArrow.GetComponentInChildren<MeshRenderer>().sharedMaterial = newMat;
 
-        MainPrototypeScript.Instance.UndoStack.AddObject(newArrow);
+        MainUiScript.Instance.UndoStack.AddObject(newArrow);
 
         TrackingManager.Instance.ParentToAnchor(newArrow.transform);
     }

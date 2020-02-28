@@ -214,6 +214,8 @@ namespace RemoteAssist.UI
             Record_OuterRing,
             [IconCharacterMapping("")]
             Volume,
+            [IconCharacterMapping("")]
+            Sync,
         }
 
         public static IReadOnlyDictionary<IconKey, IconCharacterMapping> IconsMap { get; }

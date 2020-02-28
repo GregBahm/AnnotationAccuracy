@@ -37,17 +37,41 @@ public class AnnotationCursorBehavior : MonoBehaviour
         Instance = this;
     }
 
-    public void DoUpdate()
+    public void DoUpdate(PrototypeConfiguration.PlacementStyle placementStyle, bool showRing)
     {
         UpdateElementScale();
 
-        //UpdatePositionTargetLegacyStyle();
-        UpdatePositionTarget();
-        UpdateVisualPositions();
+        UpdatePositionTarget(placementStyle);
+        UpdateVisualPositions(showRing);
         UpdateShaders();
     }
 
-    private void UpdatePositionTarget()
+    private void UpdatePositionTarget(PrototypeConfiguration.PlacementStyle placementStyle)
+    {
+        switch (placementStyle)
+        {
+            case PrototypeConfiguration.PlacementStyle.SnappingStyle:
+                UpdatePositionSnappingStyle();
+                break;
+            case PrototypeConfiguration.PlacementStyle.Legacy:
+                UpdatePositionTargetLegacyStyle();
+                break;
+            case PrototypeConfiguration.PlacementStyle.Triangulated:
+            default:
+                UpdatePositionTargetTriangulated();
+                break;
+        }
+    }
+
+    private void UpdatePositionSnappingStyle()
+    {
+        Quaternion rotation = Quaternion.LookRotation(TriangleMaker.Instance.TrianglePlane.normal);
+        positionTarget = new Pose(TriangleMaker.Instance.PointA, rotation);
+
+        root.position = Vector3.Lerp(root.position, positionTarget.position, Time.deltaTime * 10);
+    }
+
+    private void UpdatePositionTargetTriangulated()
     {
         Ray ray = GetCursorRay();
 
@@ -56,6 +80,8 @@ public class AnnotationCursorBehavior : MonoBehaviour
         Vector3 hitLocation = ray.origin + ray.direction * rayDist;
         Quaternion rotation = Quaternion.LookRotation(TriangleMaker.Instance.TrianglePlane.normal);
         positionTarget = new Pose(hitLocation, rotation);
+
+        SetCursorZ();
     }
 
     private void UpdateShaders()
@@ -64,9 +90,9 @@ public class AnnotationCursorBehavior : MonoBehaviour
         Shader.SetGlobalVector("_CursorPos", centerDot.position);
     }
 
-    private void UpdateVisualPositions()
+    private void UpdateVisualPositions(bool showRing)
     {
-        SetCursorZ();
+        ringPivot.gameObject.SetActive(showRing);
         ringPivot.rotation = PositionTarget.rotation;
     }
 
@@ -104,7 +130,7 @@ public class AnnotationCursorBehavior : MonoBehaviour
         return linePoint + unitVector * theDot;
     }
 
-    private bool UpdatePositionTargetLegacyStyle()
+    private void UpdatePositionTargetLegacyStyle()
     {
         float x = Camera.main.pixelWidth / 2;
         float y = Camera.main.pixelHeight / 2;
@@ -113,8 +139,8 @@ public class AnnotationCursorBehavior : MonoBehaviour
         if (Frame.Raycast(x, y, priorityFlags, out hit))
         {
             positionTarget = hit.Pose;
-            return true;
+
+            SetCursorZ();
         }
-        return false;
     }
 }

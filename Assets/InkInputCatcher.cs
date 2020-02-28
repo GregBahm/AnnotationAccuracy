@@ -12,8 +12,8 @@ public class InkInputCatcher : MonoBehaviour, IPointerDownHandler
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        MainPrototypeScript.Instance.Menus = MainPrototypeScript.MenuMode.None;
-        if (MainPrototypeScript.Instance.Tool == MainPrototypeScript.ToolMode.Inking)
+        MainUiScript.Instance.Menus = MainUiScript.MenuMode.None;
+        if (MainUiScript.Instance.Tool == MainUiScript.ToolMode.Inking)
         {
             InkerScript.Instance.DoInk = true;
         }

@@ -23,6 +23,16 @@ public class MeshBuilder : MonoBehaviour
         Instance = this;
     }
 
+    private void OnEnable()
+    {
+        outputMeshFilter.gameObject.SetActive(true);
+    }
+
+    private void OnDisable()
+    {
+        outputMeshFilter.gameObject.SetActive(false);
+    }
+
     private void Start()
     {
         outputMesh = new Mesh();
@@ -32,10 +42,10 @@ public class MeshBuilder : MonoBehaviour
     public void BuildMeshFromFeaturePoints()
     {
         List<Vector3> rawPoints = GetPointCloudPositions().ToList();
-        List<Vector3> psuedoHightmapPoints = rawPoints.Select(item => SwizzleVertex(item)).ToList();
+        List<Vector3> psuedoHightmapPoints = rawPoints.Select(item => GetPointAsPsuedoHeightmap(item)).ToList();
         if (psuedoHightmapPoints.Count >= 3)
         {
-            psuedoHightmapPoints.AddRange(GetCornerPoints(psuedoHightmapPoints, rawPoints));
+            //psuedoHightmapPoints.AddRange(GetCornerPoints(psuedoHightmapPoints, rawPoints));
             TriangleNet.Mesh mesh = GetTriangulatedMesh(psuedoHightmapPoints);
             UpdateOutputMesh(mesh);
         }

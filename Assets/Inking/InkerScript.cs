@@ -65,7 +65,7 @@ public class InkerScript : MonoBehaviour
         renderer.material.color = AnnotationColorManager.Instance.AnnotationColor;
         renderer.widthMultiplier = strokeWeight;
         InkingStroke ret = retObj.GetComponent<InkingStroke>();
-        MainPrototypeScript.Instance.UndoStack.AddObject(retObj);
+        MainUiScript.Instance.UndoStack.AddObject(retObj);
         return ret;
     }
 

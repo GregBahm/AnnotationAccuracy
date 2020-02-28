@@ -18,7 +18,7 @@ public class ArrowInputCatcher : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        MainPrototypeScript.Instance.Menus = MainPrototypeScript.MenuMode.None;
+        MainUiScript.Instance.Menus = MainUiScript.MenuMode.None;
         ArrowController.Instance.IsRotating = true;
         pressStartPos = Input.mousePosition;
     }
@@ -33,7 +33,7 @@ public class ArrowInputCatcher : MonoBehaviour, IPointerDownHandler, IPointerUpH
     private bool GetShouldAddArrow()
     {
         if(!ArrowController.Instance.IsRotating
-            || MainPrototypeScript.Instance.Tool != MainPrototypeScript.ToolMode.Arrows)
+            || MainUiScript.Instance.Tool != MainUiScript.ToolMode.Arrows)
         {
             return false;
         }
