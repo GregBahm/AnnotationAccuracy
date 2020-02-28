@@ -132,15 +132,16 @@ public class AnnotationCursorBehavior : MonoBehaviour
 
     private void UpdatePositionTargetLegacyStyle()
     {
-        float x = Camera.main.pixelWidth / 2;
-        float y = Camera.main.pixelHeight / 2;
-
         TrackableHit hit;
-        if (Frame.Raycast(x, y, priorityFlags, out hit))
+        if (Frame.Raycast(Input.mousePosition.x, Input.mousePosition.y, priorityFlags, out hit))
         {
             positionTarget = hit.Pose;
-
-            SetCursorZ();
+            root.position = hit.Pose.position;
+        }
+        else
+        {
+            Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1.5f);
+            root.position = Camera.main.ScreenToWorldPoint(pos);
         }
     }
 }

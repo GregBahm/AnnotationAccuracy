@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,14 +7,46 @@ public class ArrowInputCatcher : MonoBehaviour, IPointerDownHandler, IPointerUpH
 {
     [SerializeField]
     private float clickDragDistThreshold;
+
+    [SerializeField]
+    private Material ghostArrowMat;
+
     private Vector2 pressStartPos;
+    private bool isPressed;
 
     private void Update()
     {
-        if(ArrowController.Instance.IsRotating && !Input.GetMouseButton(0))
+        if(PrototypeConfiguration.Instance.Placement == PrototypeConfiguration.PlacementStyle.Legacy)
+        {
+            DoLegacyPlacement();
+        }
+        else
+        {
+            DoCenterLockedStyleUpdate();
+        }
+    }
+
+    private void DoLegacyPlacement()
+    {
+        if(!Input.GetMouseButton(0))
+        {
+            if(isPressed)
+            {
+                ArrowController.Instance.AddArrow();
+            }
+            isPressed = false;
+        }
+
+        ghostArrowMat.SetFloat("_OpacityRange", isPressed ? .6f : 0);
+    }
+
+    private void DoCenterLockedStyleUpdate()
+    {
+        if (ArrowController.Instance.IsRotating && !Input.GetMouseButton(0))
         {
             ArrowController.Instance.IsRotating = false;
         }
+        ghostArrowMat.SetFloat("_OpacityRange", .6f);
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -21,6 +54,7 @@ public class ArrowInputCatcher : MonoBehaviour, IPointerDownHandler, IPointerUpH
         MainUiScript.Instance.Menus = MainUiScript.MenuMode.None;
         ArrowController.Instance.IsRotating = true;
         pressStartPos = Input.mousePosition;
+        isPressed = true;
     }
 
     public void OnPointerUp(PointerEventData eventData)

@@ -43,17 +43,25 @@ public class ArrowController : MonoBehaviour
         {
             arrowPivot.gameObject.SetActive(true);
             UpdateColors();
-            if (IsRotating)
+            if(PrototypeConfiguration.Instance.Placement != PrototypeConfiguration.PlacementStyle.Legacy)
             {
-                if (!wasRotating)
-                {
-                    StartRotation();
-                }
-                UpdateRotation();
+                HandleRotation();
             }
-
-            wasRotating = IsRotating;
         }
+    }
+
+    private void HandleRotation()
+    {
+        if (IsRotating)
+        {
+            if (!wasRotating)
+            {
+                StartRotation();
+            }
+            UpdateRotation();
+        }
+
+        wasRotating = IsRotating;
     }
 
     private void UpdateColors()

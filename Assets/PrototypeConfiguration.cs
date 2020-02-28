@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PrototypeConfiguration : MonoBehaviour
 {
+    public static PrototypeConfiguration Instance { get; private set; }
+
     [SerializeField]
     private PlacementStyle placement;
 
@@ -13,7 +15,11 @@ public class PrototypeConfiguration : MonoBehaviour
 
     [SerializeField]
     private UiLayoutStyle uiLayout;
-    
+
+    public PlacementStyle Placement { get => placement; set => placement = value; }
+    public SpatialEffectsStyle SpatialEffects { get => spatialEffects; set => spatialEffects = value; }
+    public UiLayoutStyle UiLayout { get => uiLayout; set => uiLayout = value; }
+
     public enum UiLayoutStyle
     {
         Original,
@@ -29,6 +35,7 @@ public class PrototypeConfiguration : MonoBehaviour
 
     public enum SpatialEffectsStyle
     {
+        None,
         Ring,
         LinesToTrianglePoint,
         Triangle,
@@ -36,7 +43,12 @@ public class PrototypeConfiguration : MonoBehaviour
         Snapping,
         //PulsingPoints
     }
-    
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Update()
     {
         DoMeshUpdate();

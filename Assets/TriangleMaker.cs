@@ -66,10 +66,23 @@ public class TriangleMaker : MonoBehaviour
 
     private void UpdateMesh(PointSorter sortedPoints)
     {
-        TrianglePlane = new Plane(sortedPoints.FirstPoint.WorldPos, sortedPoints.SecondPoint.WorldPos, sortedPoints.ThirdPoint.WorldPos);
-        triangleMesh.vertices = new Vector3[] { sortedPoints.FirstPoint.WorldPos, sortedPoints.SecondPoint.WorldPos, sortedPoints.ThirdPoint.WorldPos };
+        Vector3 v0 = sortedPoints.FirstPoint.WorldPos;
+        Vector3 v1 = sortedPoints.SecondPoint.WorldPos;
+        Vector3 v2 = sortedPoints.ThirdPoint.WorldPos;
+
+        TrianglePlane = new Plane(v0, v1, v2);
+        triangleMesh.vertices = new Vector3[] { v0, v1, v2 };
         triangleMesh.normals = new Vector3[] { TrianglePlane.normal, TrianglePlane.normal, TrianglePlane.normal };
         triangleMesh.RecalculateBounds();
+    }
+    
+    float GetProjectedLength(Vector3 to, Vector3 otherA, Vector3 otherB)
+    {
+        Vector3 toOther = otherA - otherB;
+        Vector3 toTo = otherA - to;
+        Vector3 projected = Vector3.Project(toOther, toTo);
+        return (projected - toTo).magnitude;
+
     }
 
     private IEnumerable<Datum> GetData(Vector2 cursorPixelPosition)

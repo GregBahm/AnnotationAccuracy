@@ -52,15 +52,24 @@ public class TrackingManager : MonoBehaviour
 
     private void UpdateVisuals()
     {
-        float trackingnessTarget = HasTracking ? 1 : 0;
+        float trackingnessTarget = GetTrackinessTarget();
         trackingness = Mathf.Lerp(trackingness, trackingnessTarget, Time.deltaTime * 4);
 
         float trackinglossAlpha = Mathf.Clamp01(1 - (trackingness * 2));
         trackingLossIndicator.color = new Color(1, 1, 1, trackinglossAlpha);
 
         float cursorElementAlpha = Mathf.Clamp01(trackingness * 2);
-        ghostArrowMat.SetFloat("_Opacity", cursorElementAlpha * .6f);
+        ghostArrowMat.SetFloat("_Opacity", cursorElementAlpha);
         arrowRingMat.SetFloat("_Opacity", cursorElementAlpha);
+    }
+
+    private float GetTrackinessTarget()
+    {
+        if(PrototypeConfiguration.Instance.Placement == PrototypeConfiguration.PlacementStyle.Legacy)
+        {
+            return 1;
+        }
+        return HasTracking ? 1 : 0;
     }
 
     private bool GetHasTracking()

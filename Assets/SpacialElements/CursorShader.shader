@@ -4,6 +4,7 @@
     {
 		_Color("Color", Color) = (1,1,1,1)
 		_Opacity("Opacity", Range(0, 1)) = 1
+		_OpacityRange("Opacity Range", Range(0, 1)) = 1
     }
     SubShader
     {
@@ -36,6 +37,7 @@
 			float4 _Color;
 			float4 _ShadowColor;
 			float _Opacity;
+			float _OpacityRange;
 
             v2f vert (appdata v)
             {
@@ -61,7 +63,7 @@
 				float3 norm = normalize(i.normal);
 				float3 lightingColor = GetLightningColor(norm);
 				float3 ret = lightingColor * _Color;
-				return float4(ret, _Opacity);
+				return float4(ret, _Opacity * _OpacityRange);
 
             }
             ENDCG
